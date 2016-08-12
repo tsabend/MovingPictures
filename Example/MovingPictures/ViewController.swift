@@ -11,6 +11,7 @@ import UIKit
 import MovingPictures
 import AVKit
 import AVFoundation
+import Result
 
 class ImageCell: UICollectionViewCell {
     @IBOutlet weak var textField: UITextField!
@@ -51,10 +52,10 @@ class ViewController: UIViewController {
         let imageTimes: [ImageTime] = Array(zip(images, times))
         
         let settings = RenderSettings(size: images.first!.size, videoFilename: "foo", videoExtension: .MOV)
-        let writer = try! ImageAnimator(imageTimes: imageTimes, renderSettings: settings)
-        writer.render { (result: Result<NSURL>) in
+        let writer = ImageAnimator(imageTimes: imageTimes, renderSettings: settings)
+        writer.render { (result: Result<NSURL, VideoWritingError>) in
             do {
-                let url = try result.unwrap()
+                let url = try result.dematerialize()
                 let asset = AVAsset(URL: url)
                 let item = AVPlayerItem(asset: asset)
                 self.playerViewController.player = AVPlayer(playerItem: item)

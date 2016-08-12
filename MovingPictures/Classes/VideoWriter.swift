@@ -8,31 +8,7 @@
 
 import AVFoundation
 import UIKit
-
-public enum Result<T: Any> {
-    case Success(T)
-    case Failure(ErrorType)
-}
-
-public extension Result {
-    
-    init(_ f: () throws -> T) {
-        do {
-            self = .Success(try f())
-        } catch let e {
-            self = .Failure(e)
-        }
-    }
-    
-    func unwrap() throws -> T {
-        switch self {
-        case let .Success(x):
-            return x
-        case let .Failure(e):
-            throw e
-        }
-    }
-}
+import Result
 
 // The class that does the actual video writing.
 class VideoWriter {
@@ -48,7 +24,7 @@ class VideoWriter {
     /// - parameter appendPixelBuffers: a function that writes image data into the videoWriter. Returns true when all of the pixels have been written.
     /// - parameter totalDuration: The total duration of the final video. 
     /// - parameter completion: called when the render is completed or errored. Unwrap the result to check for errors.
-    func render(appendPixelBuffers: (VideoWriter) throws -> Bool, totalDuration: Double,  completion: (Result<Void>) -> Void) {
+    func render(appendPixelBuffers: (VideoWriter) throws -> Bool, totalDuration: Double,  completion: (Result<Void, VideoWritingError>) -> Void) {
         
         guard let videoWriter = self.videoWriter else { completion(Result { throw(VideoWritingError.InvalidWriter)}); return}
         
@@ -152,7 +128,7 @@ class VideoWriter {
 }
 
 
-enum VideoWritingError : ErrorType {
+public enum VideoWritingError : ErrorType {
     case TimingError
     case InvalidWriter
     case MissingPixelBuffer

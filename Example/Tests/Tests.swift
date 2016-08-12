@@ -4,7 +4,7 @@ import Quick
 import Nimble
 import MovingPictures
 
-class TableOfContentsSpec: QuickSpec {
+class ImageAnimator: QuickSpec {
     override func spec() {
         describe("these will fail") {
 

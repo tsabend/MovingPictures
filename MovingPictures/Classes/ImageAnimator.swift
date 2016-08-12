@@ -9,7 +9,7 @@
 // modified from http://stackoverflow.com/questions/3741323/how-do-i-export-uiimage-array-as-a-movie
 import AVFoundation
 import UIKit
-import Photos
+import Result
 
 public typealias ImageTime = (image: UIImage, time: Double)
 
@@ -30,8 +30,7 @@ public class ImageAnimator {
     /// - parameter imageTimes: An array of imageTimes. Must not be empty.
     /// - render settings: The settings to use for rendering the images into video
     /// - throws: Will throw an error if called with an empty list of imageTimes
-    public init(imageTimes: [ImageTime], renderSettings: RenderSettings) throws {
-        guard imageTimes.count > 0 else { throw ImageAnimatorError.NoImages }
+    public init(imageTimes: [ImageTime], renderSettings: RenderSettings) {
         self.settings = renderSettings
         self.videoWriter = VideoWriter(renderSettings: settings)
         self.imageTimes = imageTimes
@@ -40,7 +39,7 @@ public class ImageAnimator {
     /// Renders the images into a video and calls the completion when it is finished.
     /// Completion will either include the URL where you will find the video or throw
     /// an error if writing failed.
-    public func render(completion: (Result<NSURL>) -> Void) {
+    public func render(completion: (Result<NSURL, VideoWritingError>) -> Void) {
         // The VideoWriter will fail if a file exists at the URL, so clear it out first.
         do {
             try NSFileManager.defaultManager().removeItemAtPath(self.settings.outputURL.path!)
@@ -51,9 +50,9 @@ public class ImageAnimator {
         }
         
         // Render the images into a video
-        self.videoWriter.render(self.appendPixelBuffers, totalDuration: self.totalDuration) { (result: Result<Void>) in
+        self.videoWriter.render(self.appendPixelBuffers, totalDuration: self.totalDuration) { (result: Result<Void, VideoWritingError>) in
             do {
-                try result.unwrap()
+                try result.dematerialize()
                 completion(Result { _ in self.settings.outputURL })
             } catch let error {
                 completion(Result { throw error})

@@ -1,9 +1,9 @@
 {
   "name": "MovingPictures",
   "version": "0.1.0",
-  "summary": "A short description of MovingPictures.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/MovingPictures",
+  "summary": "Turn your images into videos.",
+  "description": "Take an array of images and turn them into a video. Customize the duration of each frame\nand the exporting file format.",
+  "homepage": "https://github.com/tsabend/MovingPictures",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -18,5 +18,10 @@
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "MovingPictures/Classes/**/*"
+  "source_files": "MovingPictures/Classes/**/*",
+  "dependencies": {
+    "Result": [
+      "~> 2.1.3"
+    ]
+  }
 }
