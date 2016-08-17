@@ -33,7 +33,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
     }
     
@@ -51,9 +50,9 @@ class ViewController: UIViewController {
         let times = cells.map { Double($0.textField.text ?? "0" )!}
         let imageTimes: [ImageTime] = Array(zip(images, times))
         
-        let settings = RenderSettings(size: images.first!.size, videoFilename: "foo", videoExtension: .MOV)
-        let writer = ImageAnimator(imageTimes: imageTimes, renderSettings: settings)
-        writer.render { (result: Result<NSURL, VideoWritingError>) in
+        let settings = RenderSettings(size: images.first!.size, videoFilename: "foo", videoExtension: .MOV, contentMode: .ScaleAspectFit)
+        let writer = MovingPictures(settings: settings)
+        writer.render(imageTimes) { (result: Result<NSURL, NSError>) in
             do {
                 let url = try result.dematerialize()
                 let asset = AVAsset(URL: url)
@@ -63,13 +62,8 @@ class ViewController: UIViewController {
             } catch {
                 print(error)
             }
-        }
-        
-        
-        
-        
+        }   
     }
-
 }
 
 // MARK: - CollectionView

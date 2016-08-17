@@ -17,14 +17,16 @@ public struct RenderSettings {
     let videoFilename: String
     /// The file extension for the video
     let videoExtension: VideoExtension
+    /// The contentMode used to render the images as they are written to the video
+    let contentMode: ContentMode
     
-    public init(size: CGSize, videoFilename: String, videoExtension: VideoExtension) {
+    public init(size: CGSize, videoFilename: String, videoExtension: VideoExtension = .MOV, contentMode: ContentMode = .ScaleAspectFit) {
         self.size = size
         self.videoFilename = videoFilename
         self.videoExtension = videoExtension
+        self.contentMode = contentMode
     }
     
-    private let avCodecKey = AVVideoCodecH264
     
     private var cacheDirectoryURL: NSURL {
         // Use the CachesDirectory so the rendered video file sticks around as long as we need it to.
@@ -42,17 +44,17 @@ public struct RenderSettings {
     
     var outputSettings: [String : AnyObject] {
         return [
-            AVVideoCodecKey: self.avCodecKey,
-            AVVideoWidthKey: NSNumber(float: Float(self.size.width)),
-            AVVideoHeightKey: NSNumber(float: Float(self.size.height))
+            AVVideoCodecKey: AVVideoCodecH264,
+            AVVideoWidthKey: self.size.width,
+            AVVideoHeightKey: self.size.height
         ]
     }
     
     var pixelAttributes : [String : AnyObject] {
         return [
-            kCVPixelBufferPixelFormatTypeKey as String: NSNumber(unsignedInt: kCVPixelFormatType_32ARGB),
-            kCVPixelBufferWidthKey as String: NSNumber(float: Float(self.size.width)),
-            kCVPixelBufferHeightKey as String: NSNumber(float: Float(self.size.height))
+            kCVPixelBufferPixelFormatTypeKey as String: Float(kCVPixelFormatType_32ARGB),
+            kCVPixelBufferWidthKey as String: self.size.width,
+            kCVPixelBufferHeightKey as String: self.size.height
         ]
     }
 }
@@ -60,4 +62,8 @@ public struct RenderSettings {
 public enum VideoExtension: String {
     case MOV = "mov"
     case MP4 = "mp4"
+}
+
+public enum ContentMode {
+    case ScaleAspectFill, ScaleAspectFit
 }
