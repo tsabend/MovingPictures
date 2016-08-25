@@ -1,9 +1,8 @@
 //
-//  VideoWriter.swift
-//  PictoGif
+//  MovingPictures.swift
+//  MovingPictures
 //
 //  Created by Thomas Abend on 6/11/16.
-//  Copyright © 2016 Sean. All rights reserved.
 //
 
 import AVFoundation

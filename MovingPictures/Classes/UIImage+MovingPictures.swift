@@ -1,9 +1,8 @@
 //
 //  ImageAnimator.swift
-//  PictoGif
+//  MovingPictures
 //
 //  Created by Thomas Abend on 6/10/16.
-//  Copyright © 2016 Sean. All rights reserved.
 //
 
 // modified from http://stackoverflow.com/questions/3741323/how-do-i-export-uiimage-array-as-a-movie

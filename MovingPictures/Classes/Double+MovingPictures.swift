@@ -1,6 +1,6 @@
 //
 //  Double+MovingPictures.swift
-//  Pods
+//  MovingPictures
 //
 //  Created by Thomas Abend on 8/18/16.
 //
