@@ -28,6 +28,7 @@ public class MovingPictures {
     /// Completion will either include the URL where you will find the video or throw
     /// an error if writing failed.
     public func render(imageTimes: [ImageTime], completion: (Result<NSURL, NSError>) -> Void) {
+        guard !imageTimes.isEmpty else { completion(Result { throw VideoWritingError.NoImages }); return }
         // The VideoWriter will fail if a file exists at the URL, so clear it out first.
         do {
             try NSFileManager.defaultManager().removeItemAtPath(self.settings.outputURL.path!)
@@ -78,8 +79,6 @@ public class MovingPictures {
     private func appendPixelBuffers(imageTimes: [ImageTime]) throws {
         var elapsed = 0.inSeconds
         for imageTime in imageTimes {
-            guard self.videoWriterInput.readyForMoreMediaData else { throw VideoWritingError.InvalidWriter }
-            
             let frameDuration = imageTime.time.inSeconds
             try self.addImage(imageTime.image, withPresentationTime: elapsed)
             elapsed = CMTimeAdd(elapsed, frameDuration)
@@ -94,6 +93,7 @@ public class MovingPictures {
     /// - parameter presentationTime: The time for the image to be added on. Be sure not to add images at times that already have data or an error will throw.
     private func addImage(image: UIImage, withPresentationTime presentationTime: CMTime) throws {
         let pixelBuffer = try image.toPixelBuffer(pixelBufferAdaptor.pixelBufferPool!, size: self.settings.size, contentMode: self.settings.contentMode)
+        guard self.videoWriterInput.readyForMoreMediaData else { throw VideoWritingError.InvalidWriter }
         let success = pixelBufferAdaptor.appendPixelBuffer(pixelBuffer, withPresentationTime: presentationTime)
         if !success { throw(VideoWritingError.TimingError) }
     }

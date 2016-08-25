@@ -71,12 +71,10 @@ class MovingPicturesSpec: QuickSpec {
             context("no images are passed in") {
                 it("calls the completion throwing a VideoWritingError.NoImages error") {
                     let writer = MovingPictures(settings: settings)
-                    writer.render(imageTimes) { (result: Result<NSURL, NSError>) in
-                        do {
+                    writer.render([]) { (result: Result<NSURL, NSError>) in
+                        expect {
                             try result.dematerialize()
-                        } catch let error {
-                            expect(error as NSError) == VideoWritingError.NoImages as NSError
-                        }
+                        }.to(throwError(VideoWritingError.NoImages))
                     }
                 }
             }
