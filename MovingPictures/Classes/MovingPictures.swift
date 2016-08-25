@@ -9,16 +9,24 @@ import AVFoundation
 import UIKit
 import Result
 
+/// An image and the duration (in seconds) the image should appear in a video
 public typealias ImageTime = (image: UIImage, time: Double)
 
-/// A wrapper around AVAssetWriting designed for writing photos to videos.
+/// The error states for MovingPictures
+public enum MovingPicturesError : ErrorType {
+    case TimingError
+    case InvalidWriter
+    case MissingPixelBuffer
+    case NoImages
+}
+
+
+/// You use an instance of MovingPictures to write images into videos.
 /// Much like the underlying AVAssetWriter, this class is single-use.
 public class MovingPictures {
     
     private let settings: RenderSettings
-    /// - parameter imageTimes: An array of imageTimes. Must not be empty.
     /// - render settings: The settings to use for rendering the images into video
-    /// - throws: Will throw an error if called with an empty list of imageTimes
     public init(settings: RenderSettings) {
         self.settings = settings
     }
@@ -26,8 +34,10 @@ public class MovingPictures {
     /// Renders the images into a video and calls the completion when it is finished.
     /// Completion will either include the URL where you will find the video or throw
     /// an error if writing failed.
+    /// - parameter imageTimes: An array of imageTimes. Must not be empty.
+    /// - parameter completion: called when the render is completed or errored. Unwrap the result to check for errors.
     public func render(imageTimes: [ImageTime], completion: (Result<NSURL, NSError>) -> Void) {
-        guard !imageTimes.isEmpty else { completion(Result { throw VideoWritingError.NoImages }); return }
+        guard !imageTimes.isEmpty else { completion(Result { throw MovingPicturesError.NoImages }); return }
         // The VideoWriter will fail if a file exists at the URL, so clear it out first.
         do {
             try NSFileManager.defaultManager().removeItemAtPath(self.settings.outputURL.path!)
@@ -48,7 +58,7 @@ public class MovingPictures {
     /// - parameter imageTimes: the images to write to video
     /// - parameter completion: called when the render is completed or errored. Unwrap the result to check for errors.
     private func _render(imageTimes: [ImageTime], completion: (Result<NSURL, NSError>) -> Void) {
-        guard let videoWriter = self.videoWriter else { completion(Result { throw(VideoWritingError.InvalidWriter)}); return}
+        guard let videoWriter = self.videoWriter else { completion(Result { throw(MovingPicturesError.InvalidWriter)}); return}
 
         let queue = dispatch_queue_create("mediaInputQueue", nil)
         videoWriterInput.requestMediaDataWhenReadyOnQueue(queue) {
@@ -92,11 +102,12 @@ public class MovingPictures {
     /// - parameter presentationTime: The time for the image to be added on. Be sure not to add images at times that already have data or an error will throw.
     private func addImage(image: UIImage, withPresentationTime presentationTime: CMTime) throws {
         let pixelBuffer = try image.toPixelBuffer(pixelBufferAdaptor.pixelBufferPool!, size: self.settings.size, contentMode: self.settings.contentMode)
-        guard self.videoWriterInput.readyForMoreMediaData else { throw VideoWritingError.InvalidWriter }
+        guard self.videoWriterInput.readyForMoreMediaData else { throw MovingPicturesError.InvalidWriter }
         let success = pixelBufferAdaptor.appendPixelBuffer(pixelBuffer, withPresentationTime: presentationTime)
-        if !success { throw(VideoWritingError.TimingError) }
+        if !success { throw(MovingPicturesError.TimingError) }
     }
     
+    /// The video writer that will write the pixels to a video
     private lazy var videoWriter: AVAssetWriter? = {
         do {
             let videoWriter = try AVAssetWriter(URL: self.settings.outputURL, fileType: AVFileTypeMPEG4)
@@ -114,21 +125,15 @@ public class MovingPictures {
         }
     }()
     
+    /// The input used by the pixelBufferAdaptor
     private lazy var videoWriterInput: AVAssetWriterInput = {
         return AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: self.settings.outputSettings)
     }()
     
+    /// The pixel buffer adaptor used by the videoWriter
     private lazy var pixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor = {
         return AVAssetWriterInputPixelBufferAdaptor(
             assetWriterInput: self.videoWriterInput,
             sourcePixelBufferAttributes: self.settings.pixelAttributes)
     }()
-}
-
-
-public enum VideoWritingError : ErrorType {
-    case TimingError
-    case InvalidWriter
-    case MissingPixelBuffer
-    case NoImages
 }

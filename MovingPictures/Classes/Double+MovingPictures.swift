@@ -9,7 +9,7 @@
 import AVFoundation
 
 extension Double {
-    /// convenience method for making valid times from ImageTimes
+    /// convenience method for making times for video writing
     var inSeconds: CMTime {
         // Apple suggests a timescale of 600 because it's a multiple of standard video rates 24, 25, 30, 60 fps etc.
         let timescale: Double = 600

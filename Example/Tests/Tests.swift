@@ -74,7 +74,7 @@ class MovingPicturesSpec: QuickSpec {
                     writer.render([]) { (result: Result<NSURL, NSError>) in
                         expect {
                             try result.dematerialize()
-                        }.to(throwError(VideoWritingError.NoImages))
+                        }.to(throwError(MovingPicturesError.NoImages))
                     }
                 }
             }

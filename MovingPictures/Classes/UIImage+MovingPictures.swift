@@ -9,12 +9,19 @@
 import AVFoundation
 
 extension UIImage {
+    
+    /// Turns a UIImage into a CVPixelBuffer, throwing an error if the conversion fails.
+    /// - parameter pixelBufferPool: The pool in which to create the pixel buffer
+    /// - parameter size: The desired size of the pixel buffer
+    /// - parameter contentMode: specify how the image will be made to fit the size
+    /// - returns: CVPixelBuffer representing the image
+    /// - throws: VideoWritingError.MissingPixelbuffer if you fail to create a  pixel buffer.
     func toPixelBuffer(pixelBufferPool: CVPixelBufferPool, size: CGSize, contentMode: ContentMode) throws -> CVPixelBuffer {
         
         var pixelBufferOut: CVPixelBuffer?
         
         let success = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pixelBufferPool, &pixelBufferOut)
-        guard success == kCVReturnSuccess else { throw(VideoWritingError.MissingPixelBuffer) }
+        guard success == kCVReturnSuccess else { throw(MovingPicturesError.MissingPixelBuffer) }
         
         let pixelBuffer = pixelBufferOut!
         
