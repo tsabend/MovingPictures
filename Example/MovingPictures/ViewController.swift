@@ -31,11 +31,6 @@ class ViewController: UIViewController {
         return self.childViewControllers.last as! AVPlayerViewController
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.playerViewController.view.frame = self.playerViewController.view.superview!.bounds
@@ -58,6 +53,7 @@ class ViewController: UIViewController {
                 let asset = AVAsset(URL: url)
                 let item = AVPlayerItem(asset: asset)
                 self.playerViewController.player = AVPlayer(playerItem: item)
+                self.playerViewController.showsPlaybackControls = true
                 self.playerViewController.player?.play()
             } catch {
                 print(error)

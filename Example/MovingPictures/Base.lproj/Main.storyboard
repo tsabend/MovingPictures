@@ -10,7 +10,7 @@
         <!--AV Player View Controller-->
         <scene sceneID="rnJ-cv-m6f">
             <objects>
-                <avPlayerViewController videoGravity="AVLayerVideoGravityResizeAspect" id="Tn3-fe-9Zb" sceneMemberID="viewController"/>
+                <avPlayerViewController showsPlaybackControls="NO" videoGravity="AVLayerVideoGravityResizeAspect" id="Tn3-fe-9Zb" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ua9-rA-Xuw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="266" y="1046"/>
