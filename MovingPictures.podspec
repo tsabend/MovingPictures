@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MovingPictures'
-  s.version          = '0.1.0'
+  s.version          = '0.0.1'
   s.summary          = "Turn your images into videos."
   s.description      = <<-DESC
   Take an array of images and turn them into a video. Customize the duration of each frame
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/tsabend/MovingPictures"
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'tsabend' => 'tsabend@gmail.com' }
-  s.source           = { :git => 'https://github.com/<GITHUB_USERNAME>/MovingPictures.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/tsabend/MovingPictures.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '8.0'
 
