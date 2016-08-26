@@ -5,7 +5,7 @@
 //  Created by Thomas Abend on 6/10/16.
 //
 
-// modified from http://stackoverflow.com/questions/3741323/how-do-i-export-uiimage-array-as-a-movie
+
 import AVFoundation
 
 extension UIImage {

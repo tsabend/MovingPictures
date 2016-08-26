@@ -24,6 +24,8 @@ pod "MovingPictures"
 
 tsabend, tsabend@gmail.com
 
+This code was inspired by the answers in http://stackoverflow.com/questions/3741323/how-do-i-export-uiimage-array-as-a-movie. Thanks to Scott Raposa and Praxiteles.
+
 ## License
 
 MovingPictures is available under the MIT license. See the LICENSE file for more info.
