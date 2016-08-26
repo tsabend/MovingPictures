@@ -18,6 +18,31 @@ class MovingPicturesSpec: QuickSpec {
             let imageTimes: [ImageTime] = Array(zip(images, times))
             let settings = RenderSettings(size: images.first!.size, videoFilename: "foo")
 
+            context("no images are passed in") {
+                it("calls the completion throwing a VideoWritingError.NoImages error") {
+                    let writer = MovingPictures(settings: settings)
+                    writer.render([]) { (result: Result<NSURL, NSError>) in
+                        expect {
+                            try result.dematerialize()
+                            }.to(throwError(MovingPicturesError.NoImages))
+                    }
+                }
+            }
+            context("no file exists at the specified url") {
+                it("does not throw a NSNoSuchFile error") {
+                    _ = try? NSFileManager.defaultManager().removeItemAtPath(settings.outputURL.path!)
+                    let writer = MovingPictures(settings: settings)
+                    writer.render(imageTimes) { (result: Result<NSURL, NSError>) in
+                        expect {
+                            try result.dematerialize()
+                            }.notTo(throwError{ (error: ErrorType) in
+                                expect(error._domain).to(equal(NSCocoaErrorDomain))
+                                expect(error._code).to(equal(4))
+                                })
+                    }
+                }
+            }
+            
             it("calls the completion with a result containing the url of a video") {
                 let writer = MovingPictures(settings: settings)
                 writer.render(imageTimes) { (result: Result<NSURL, NSError>) in
@@ -66,17 +91,6 @@ class MovingPicturesSpec: QuickSpec {
                     }
                 }
                 
-            }
-            
-            context("no images are passed in") {
-                it("calls the completion throwing a VideoWritingError.NoImages error") {
-                    let writer = MovingPictures(settings: settings)
-                    writer.render([]) { (result: Result<NSURL, NSError>) in
-                        expect {
-                            try result.dematerialize()
-                        }.to(throwError(MovingPicturesError.NoImages))
-                    }
-                }
             }
         }
     }
